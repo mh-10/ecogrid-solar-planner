@@ -1,0 +1,484 @@
+/* =========================================================================
+   EcoGrid: Community Solar Planner — Main Stylesheet
+   ========================================================================= */
+
+/* -------------------------------------------------------------------------
+   CSS Custom Properties (design tokens)
+   ------------------------------------------------------------------------- */
+:root {
+  --color-bg:        #0f172a;   /* slate-900  */
+  --color-surface:   #1e293b;   /* slate-800  */
+  --color-border:    #334155;   /* slate-700  */
+  --color-text:      #e2e8f0;   /* slate-200  */
+  --color-muted:     #94a3b8;   /* slate-400  */
+  --color-amber:     #f59e0b;   /* amber-500  */
+  --color-amber-dk:  #d97706;   /* amber-600  */
+  --color-orange:    #f97316;   /* orange-500 */
+  --color-success:   #22c55e;   /* green-500  */
+  --color-danger:    #ef4444;   /* red-500    */
+
+  --radius:          8px;
+  --shadow:          0 4px 20px rgba(0, 0, 0, 0.4);
+  --transition:      0.2s ease;
+
+  --header-h:        56px;
+  --footer-h:        44px;
+}
+
+/* -------------------------------------------------------------------------
+   Reset & Base
+   ------------------------------------------------------------------------- */
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+html { font-size: 16px; scroll-behavior: smooth; }
+
+body {
+  font-family: 'Segoe UI', system-ui, -apple-system, sans-serif;
+  background: var(--color-bg);
+  color: var(--color-text);
+  display: flex;
+  flex-direction: column;
+  min-height: 100vh;
+  line-height: 1.6;
+}
+
+a { color: var(--color-amber); text-decoration: none; }
+a:hover { text-decoration: underline; }
+
+/* -------------------------------------------------------------------------
+   Header
+   ------------------------------------------------------------------------- */
+.site-header {
+  height: var(--header-h);
+  background: var(--color-surface);
+  border-bottom: 1px solid var(--color-border);
+  display: flex;
+  align-items: center;
+  padding: 0 1.5rem;
+  gap: 1rem;
+  position: sticky;
+  top: 0;
+  z-index: 1000;
+  box-shadow: var(--shadow);
+}
+
+.site-header .logo {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  font-weight: 700;
+  font-size: 1.15rem;
+  color: var(--color-amber);
+  letter-spacing: -0.3px;
+}
+
+.site-header .logo span.icon { font-size: 1.4rem; }
+
+.site-header nav {
+  margin-left: auto;
+  display: flex;
+  gap: 1.25rem;
+  font-size: 0.875rem;
+  color: var(--color-muted);
+}
+
+/* -------------------------------------------------------------------------
+   Main Layout — two-panel grid
+   ------------------------------------------------------------------------- */
+.app-main {
+  flex: 1;
+  display: grid;
+  grid-template-columns: 1fr;
+  grid-template-rows: auto 1fr;
+}
+
+/* -------------------------------------------------------------------------
+   Map Panel
+   ------------------------------------------------------------------------- */
+#map-panel {
+  position: relative;
+  border-bottom: 2px solid var(--color-border);
+  height: 58vh;          /* explicit height — required by Leaflet */
+}
+
+#map {
+  width: 100%;
+  height: 58vh;          /* must match parent; never use 100% with Leaflet */
+}
+
+/* Leaflet attribution tweak for dark theme */
+.leaflet-control-attribution {
+  background: rgba(15, 23, 42, 0.8) !important;
+  color: var(--color-muted) !important;
+  font-size: 10px !important;
+}
+
+.leaflet-control-attribution a { color: var(--color-amber) !important; }
+
+/* Click-hint overlay */
+.map-hint {
+  position: absolute;
+  bottom: 0.75rem;
+  left: 50%;
+  transform: translateX(-50%);
+  background: rgba(15, 23, 42, 0.85);
+  color: var(--color-muted);
+  font-size: 0.8rem;
+  padding: 0.3rem 0.85rem;
+  border-radius: 999px;
+  border: 1px solid var(--color-border);
+  pointer-events: none;
+  z-index: 500;
+  white-space: nowrap;
+}
+
+/* -------------------------------------------------------------------------
+   Data Panel
+   ------------------------------------------------------------------------- */
+#data-panel {
+  display: grid;
+  grid-template-columns: 340px 1fr;
+  grid-template-rows: 1fr;
+  overflow: hidden;
+}
+
+/* Left sidebar: location info + save form + saved list */
+#sidebar {
+  background: var(--color-surface);
+  border-right: 1px solid var(--color-border);
+  display: flex;
+  flex-direction: column;
+  overflow-y: auto;
+  padding: 1.25rem 1rem;
+  gap: 1rem;
+}
+
+/* -------------------------------------------------------------------------
+   Location Info Card
+   ------------------------------------------------------------------------- */
+.location-card {
+  background: var(--color-bg);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius);
+  padding: 1rem;
+}
+
+.location-card h3 {
+  font-size: 0.75rem;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.07em;
+  color: var(--color-muted);
+  margin-bottom: 0.5rem;
+}
+
+.coords-display {
+  font-size: 0.9rem;
+  color: var(--color-text);
+  margin-bottom: 0.75rem;
+  min-height: 1.4em;
+}
+
+.coords-display em {
+  color: var(--color-muted);
+  font-style: normal;
+}
+
+/* Annual summary badge */
+.annual-badge {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  background: linear-gradient(135deg, var(--color-amber), var(--color-orange));
+  color: #0f172a;
+  border-radius: var(--radius);
+  padding: 0.6rem 0.85rem;
+  font-weight: 700;
+  font-size: 1.05rem;
+  margin-top: 0.5rem;
+  transition: opacity var(--transition);
+}
+
+.annual-badge.hidden { opacity: 0; pointer-events: none; }
+
+.annual-badge .label {
+  font-size: 0.7rem;
+  font-weight: 600;
+  opacity: 0.75;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  line-height: 1;
+}
+
+/* -------------------------------------------------------------------------
+   Save Form
+   ------------------------------------------------------------------------- */
+.save-form {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+}
+
+.save-form label {
+  font-size: 0.8rem;
+  color: var(--color-muted);
+  font-weight: 500;
+}
+
+.save-form .input-row {
+  display: flex;
+  gap: 0.5rem;
+}
+
+.save-form input[type="text"],
+.save-form input[type="number"] {
+  flex: 1;
+  background: var(--color-bg);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius);
+  color: var(--color-text);
+  font-size: 0.875rem;
+  padding: 0.45rem 0.65rem;
+  outline: none;
+  transition: border-color var(--transition);
+}
+
+.save-form input:focus { border-color: var(--color-amber); }
+
+.btn-save {
+  background: var(--color-amber);
+  color: #0f172a;
+  border: none;
+  border-radius: var(--radius);
+  font-size: 0.875rem;
+  font-weight: 700;
+  padding: 0.5rem 1rem;
+  cursor: pointer;
+  transition: background var(--transition);
+  white-space: nowrap;
+}
+
+.btn-save:hover { background: var(--color-amber-dk); }
+.btn-save:disabled { opacity: 0.45; cursor: not-allowed; }
+
+/* -------------------------------------------------------------------------
+   Saved Locations List
+   ------------------------------------------------------------------------- */
+.saved-section h3 {
+  font-size: 0.75rem;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.07em;
+  color: var(--color-muted);
+  margin-bottom: 0.5rem;
+}
+
+#saved-locations {
+  display: flex;
+  flex-direction: column;
+  gap: 0.4rem;
+}
+
+.saved-item {
+  background: var(--color-bg);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius);
+  padding: 0.6rem 0.75rem;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  cursor: pointer;
+  transition: border-color var(--transition), background var(--transition);
+  gap: 0.5rem;
+}
+
+.saved-item:hover { border-color: var(--color-amber); background: #1a2744; }
+
+.saved-item-info { flex: 1; min-width: 0; }
+
+.saved-item-name {
+  font-size: 0.875rem;
+  font-weight: 600;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  color: var(--color-text);
+}
+
+.saved-item-kwh {
+  font-size: 0.75rem;
+  color: var(--color-amber);
+  font-weight: 500;
+}
+
+.btn-delete {
+  background: transparent;
+  border: 1px solid var(--color-border);
+  border-radius: 6px;
+  color: var(--color-muted);
+  cursor: pointer;
+  font-size: 0.8rem;
+  padding: 0.2rem 0.45rem;
+  transition: color var(--transition), border-color var(--transition);
+  flex-shrink: 0;
+}
+
+.btn-delete:hover { color: var(--color-danger); border-color: var(--color-danger); }
+
+.empty-state {
+  color: var(--color-muted);
+  font-size: 0.8rem;
+  text-align: center;
+  padding: 1rem 0;
+}
+
+/* -------------------------------------------------------------------------
+   Chart Area (right side of data panel)
+   ------------------------------------------------------------------------- */
+#chart-area {
+  display: flex;
+  flex-direction: column;
+  padding: 1.25rem 1.5rem;
+  gap: 0.75rem;
+  overflow: hidden;
+}
+
+#chart-area h2 {
+  font-size: 0.95rem;
+  font-weight: 600;
+  color: var(--color-muted);
+}
+
+#chart-area h2 span#chart-location-label {
+  color: var(--color-text);
+  font-weight: 700;
+}
+
+#chart-placeholder {
+  flex: 1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: var(--color-muted);
+  font-size: 0.9rem;
+  border: 1px dashed var(--color-border);
+  border-radius: var(--radius);
+  text-align: center;
+  padding: 1rem;
+}
+
+#chart-container {
+  flex: 1;
+  position: relative;
+  display: none;   /* shown by JS once data arrives */
+  min-height: 0;
+}
+
+/* -------------------------------------------------------------------------
+   Spinner overlay
+   ------------------------------------------------------------------------- */
+.spinner-overlay {
+  position: absolute;
+  inset: 0;
+  background: rgba(15, 23, 42, 0.65);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 600;
+  border-radius: var(--radius);
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity var(--transition);
+}
+
+.spinner-overlay.active { opacity: 1; pointer-events: auto; }
+
+.spinner {
+  width: 36px;
+  height: 36px;
+  border: 3px solid var(--color-border);
+  border-top-color: var(--color-amber);
+  border-radius: 50%;
+  animation: spin 0.7s linear infinite;
+}
+
+@keyframes spin { to { transform: rotate(360deg); } }
+
+/* -------------------------------------------------------------------------
+   Toast notifications
+   ------------------------------------------------------------------------- */
+#toast-container {
+  position: fixed;
+  bottom: calc(var(--footer-h) + 0.75rem);
+  right: 1rem;
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+  z-index: 2000;
+}
+
+.toast {
+  background: var(--color-surface);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius);
+  padding: 0.65rem 1rem;
+  font-size: 0.85rem;
+  color: var(--color-text);
+  box-shadow: var(--shadow);
+  animation: slideIn 0.25s ease;
+  max-width: 280px;
+}
+
+.toast.success { border-left: 3px solid var(--color-success); }
+.toast.error   { border-left: 3px solid var(--color-danger);  }
+
+@keyframes slideIn {
+  from { transform: translateX(110%); opacity: 0; }
+  to   { transform: translateX(0);    opacity: 1; }
+}
+
+/* -------------------------------------------------------------------------
+   Footer
+   ------------------------------------------------------------------------- */
+.site-footer {
+  height: var(--footer-h);
+  background: var(--color-surface);
+  border-top: 1px solid var(--color-border);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 0.75rem;
+  color: var(--color-muted);
+  padding: 0 1.5rem;
+  text-align: center;
+}
+
+.site-footer strong { color: var(--color-amber); }
+
+/* -------------------------------------------------------------------------
+   Responsive — stack panels on narrow screens
+   ------------------------------------------------------------------------- */
+@media (max-width: 768px) {
+  #map-panel {
+    height: 45vh;
+  }
+
+  #map {
+    height: 45vh;
+  }
+
+  #data-panel {
+    grid-template-columns: 1fr;
+    grid-template-rows: auto 1fr;
+    overflow-y: auto;
+  }
+
+  #sidebar {
+    border-right: none;
+    border-bottom: 1px solid var(--color-border);
+    max-height: 260px;
+  }
+
+  #chart-area { padding: 1rem; }
+}
+

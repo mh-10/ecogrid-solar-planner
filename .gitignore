@@ -1,0 +1,32 @@
+# ── Secrets ───────────────────────────────────────────
+.env
+
+# ── Python ────────────────────────────────────────────
+__pycache__/
+*.py[cod]
+*.pyo
+*.pyd
+*.egg-info/
+dist/
+build/
+.eggs/
+
+# ── Virtual environments ───────────────────────────────
+venv/
+.venv/
+env/
+
+# ── Database (auto-created at runtime) ────────────────
+database/ecogrid.db
+
+# ── Tunnel / local dev tools ──────────────────────────
+cloudflared.exe
+ngrok.exe
+ngrok.zip
+
+# ── OS / Editor noise ─────────────────────────────────
+.DS_Store
+Thumbs.db
+.idea/
+.vscode/
+*.swp
